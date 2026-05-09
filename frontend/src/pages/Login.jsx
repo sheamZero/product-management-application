@@ -2,8 +2,12 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FiMail, FiLock } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
+import { useContext } from "react";
+import AuthContext from "../providers/authContext";
 
 const Login = () => {
+    const { googleLogin, loading } = useContext(AuthContext)
+
     const {
         register,
         handleSubmit,
@@ -14,8 +18,13 @@ const Login = () => {
         console.log(data);
     };
 
-    const handleGoogleLogin = () => {
-        console.log("Google Login");
+    const handleGoogleLogin = async () => {
+        try {
+            const result = await googleLogin();
+            console.log("from login", result.user);
+        } catch (error) {
+            console.log(error.message)
+        }
     };
 
     return (
@@ -103,8 +112,9 @@ const Login = () => {
 
                 {/* google login */}
                 <button
+                    disabled={loading}
                     onClick={handleGoogleLogin}
-                    className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2.5 font-medium hover:bg-gray-50 transition"
+                    className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2.5 font-medium hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <FcGoogle className="text-xl" />
                     Continue with Google
