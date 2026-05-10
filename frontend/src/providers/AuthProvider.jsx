@@ -31,16 +31,20 @@ const AuthProvider = ({ children }) => {
 
 
     // google login
-    const googleLogin = () => {
+    const googleLogin = async () => {
         setLoading(true);
-        return signInWithPopup(auth, googleProvider)
-    }
+        try {
+            return await signInWithPopup(auth, googleProvider);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     const signOutUser = async () => {
         setLoading(true);
         // localStorage.removeItem("access-token");
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/logout`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
             withCredentials: true,
         });
         console.log("ressss --- >", response)
@@ -54,13 +58,6 @@ const AuthProvider = ({ children }) => {
             setUser(currentUser);
             setLoading(false);
             console.log("User -->>", currentUser);
-            // if (currentUser) {
-            //     const token_user = { email: currentUser?.email };
-            //     axios.post(`${import.meta.env.VITE_API_URL}/jwt`, token_user, { withCredentials: true })
-            //         .then(res => {
-            //             console.log(res.data);
-            //         })
-            // }
         })
         return () => unSubscribe();
     }, [])

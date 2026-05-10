@@ -1,19 +1,19 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FiLogOut } from "react-icons/fi";
 import { RiMenu2Line } from "react-icons/ri";
 import { Link, NavLink } from "react-router-dom";
 import NavSidebar from "./NavSidebar";
+import AuthContext from "../providers/authContext";
 
 const Navbar = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    console.log(isSidebarOpen)
-
-    // const user = { name: "John Doe", email: "john.doe@example.com" };
-    const user = false;
+    // console.log(isSidebarOpen)
+    const { user, signOutUser } = useContext(AuthContext);
+    // console.log("user ", user)
 
     return (
         <nav className="sticky top-0 left-0 bg-white shadow border-b border-b-gray-200 z-50">
-            <div className="container mx-auto px-4 md:px-10 py-5 flex items-center justify-between">
+            <div className="container mx-auto px-4 md:px-10 lg:px-16 py-5 flex items-center justify-between">
 
                 {/* logo */}
                 <div className="flex items-center gap-4">
@@ -51,7 +51,7 @@ const Navbar = () => {
                             <div className="flex items-center gap-3">
                                 <div className="hidden md:flex flex-col items-end">
                                     <span className="text-sm font-semibold">
-                                        {user?.name}
+                                        {user?.displayName}
                                     </span>
 
                                     <span className="text-xs">
@@ -59,21 +59,24 @@ const Navbar = () => {
                                     </span>
                                 </div>
 
-                                <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold overflow-hidden">
+                                <div className="w-10 h-10 rounded-full border overflow-hidden flex items-center justify-center bg-gray-200">
                                     {
-                                        user?.image ? (
+                                        user?.photoURL ? (
                                             <img
-                                                src={user?.image}
-                                                alt={user?.name}
+                                                src={user.photoURL}
+                                                alt={user.displayName}
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
-                                            user?.name?.slice(0, 2)?.toUpperCase()
+                                            <span className="text-sm font-semibold text-black">
+                                                {user?.displayName?.slice(0, 2)?.toUpperCase()}
+                                            </span>
                                         )
                                     }
                                 </div>
 
                                 <button
+                                    onClick={signOutUser}
                                     className="hidden md:flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                 >
                                     <FiLogOut /> Logout
@@ -88,12 +91,6 @@ const Navbar = () => {
                                     Login
                                 </Link>
 
-                                {/* <Link
-                                    to="/register"
-                                    className="text-base font-medium hover:text-primary"
-                                >
-                                    Register
-                                </Link> */}
                             </>
                         )
                     }
@@ -107,6 +104,7 @@ const Navbar = () => {
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
                 user={user}
+                signOutUser={signOutUser}
             />
         </nav>
     );

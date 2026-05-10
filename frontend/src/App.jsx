@@ -5,8 +5,6 @@ const App = () => {
   const location = useLocation();
   const isLoginPath = location.pathname === "/login" || location.pathname === "/register";
 
-  console.log(isLoginPath)
-
   return (
     <main>
       {!isLoginPath && <Navbar />}

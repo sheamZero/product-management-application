@@ -3,7 +3,7 @@ import { FiHome, FiLogOut, FiPackage } from "react-icons/fi";
 import { MdOutlineClose } from "react-icons/md";
 
 
-const NavSidebar = ({ isSidebarOpen, setIsSidebarOpen, user }) => {
+const NavSidebar = ({ isSidebarOpen, setIsSidebarOpen, user,signOutUser }) => {
     return (
         <>
             {
@@ -66,6 +66,7 @@ const NavSidebar = ({ isSidebarOpen, setIsSidebarOpen, user }) => {
                     {
                         user ? (
                             <button
+                            onClick={signOutUser}
                                 className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                             >
                                 <FiLogOut />

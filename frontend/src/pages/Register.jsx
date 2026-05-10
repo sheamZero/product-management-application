@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FiMail, FiLock, FiUser } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
@@ -11,13 +11,9 @@ import useAxiosPublic from "../hooks/useAxiosPublic";
 
 const Register = () => {
     const axiosPublic = useAxiosPublic();
+    const navigate = useNavigate();
     const { emailPasswordRegister, updateUserProfile, googleLogin, loading } = useContext(AuthContext);
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset
-    } = useForm();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
     // register user
     const onSubmit = async (data) => {
@@ -30,11 +26,11 @@ const Register = () => {
         try {
             const result = await emailPasswordRegister(data.email, data.password);
             await updateUserProfile(data.name);
-
+            // console.log(result)
             const userInfo = {
                 email: data.email,
                 displayName: data.name,
-                photoURL: null
+                photoURL: null | result?.user?.photoURL
             };
 
             const userForToken = {
@@ -46,12 +42,13 @@ const Register = () => {
                 console.log(userRes.data);
 
                 // generate jwt token
-                const res = await axios.post("http://localhost:9000/generate-token", userForToken, {
+                const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/generate-token`, userForToken, {
                     withCredentials: true,
                 }
                 );
                 console.log(res.data);
                 toast.success("Registration Successful");
+                navigate("/")
             }
             reset();
         } catch (error) {
@@ -73,12 +70,13 @@ const Register = () => {
             };
 
             await axiosPublic.post("/user", userInfo);
-           // generate jwt token
-            await axios.post("http://localhost:9000/generate-token", { email: user.email }, {
+            // generate jwt token
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/generate-token`, { email: user.email }, {
                 withCredentials: true,
             });
 
             toast.success("Login Successful");
+            navigate("/")
 
         } catch (error) {
             console.log(error.message);

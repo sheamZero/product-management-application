@@ -4,11 +4,13 @@ dotenv.config();
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
-import { connectDatabase } from './config/db.js';
 const port = process.env.PORT || 9000;
 
-const app = express();
+import { connectDatabase } from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
+const app = express();
 
 const corsOptions = {
     origin: ["http://localhost:5173"],
@@ -36,50 +38,27 @@ async function run() {
         const usersCollection = database.collection("users");
 
 
+        app.use("/auth", authRoutes(cookieOptions))
 
         // jwt token-------------------------
-        app.post("/generate-token", async (req, res) => {
-            const user = req.body;
-            console.log(user)
-            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-                expiresIn: "365d",
-            });
+        // app.post("/generate-token", async (req, res) => {
+        //     const user = req.body;
+        //     console.log(user)
+        //     const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        //         expiresIn: "365d",
+        //     });
 
-            res.cookie("token", token, cookieOptions).send({ success: true, token });
-        });
+        //     res.cookie("token", token, cookieOptions).send({ success: true, token });
+        // });
 
-        app.get("/logout", (req, res) => {
-            res
-                .clearCookie("token", { ...cookieOptions, maxAge: 0 })
-                .send({ success: true });
-        });
+        // app.get("/logout", (req, res) => {
+        //     res
+        //         .clearCookie("token", { ...cookieOptions, maxAge: 0 })
+        //         .send({ success: true });
+        // });
 
 
-        app.post("/user", async (req, res) => {
-            const user = req.body;
-
-            const query = { email: user.email }
-            const existingUser = await usersCollection.findOne(query);
-
-            if (existingUser) {
-                return res.send({
-                    success: false,
-                    message: "User already exists",
-                });
-            }
-
-            const newUser = {
-                ...user,
-                createdAt: new Date(),
-            };
-
-            const result = await usersCollection.insertOne(newUser);
-
-            res.send({
-                success: true,
-                result,
-            });
-        });
+        app.use("/user", userRoutes(usersCollection));
 
 
     } finally {
@@ -87,7 +66,6 @@ async function run() {
     }
 }
 run().catch(console.dir);
-
 
 
 
