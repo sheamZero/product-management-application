@@ -4,9 +4,13 @@ import { FiMail, FiLock } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { useContext } from "react";
 import AuthContext from "../providers/authContext";
+import useAxiosPublic from "../hooks/useAxiosPublic";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const Login = () => {
-    const { googleLogin, loading } = useContext(AuthContext)
+    const { googleLogin,emailPasswordLogin, loading } = useContext(AuthContext)
+    const axiosPublic = useAxiosPublic();
 
     const {
         register,
@@ -14,16 +18,64 @@ const Login = () => {
         formState: { errors },
     } = useForm();
 
-    const onSubmit = (data) => {
+const onSubmit = async (data) => {
+    try {
         console.log(data);
-    };
+
+        const { email, password } = data;
+
+        // 1. Firebase login
+        const result = await emailPasswordLogin(email, password);
+
+        const user = result.user;
+
+        // 2. user payload for backend
+        const userForToken = {
+            email: user.email,
+        };
+
+        // 3. JWT generate + cookie set
+        const res = await axios.post(
+            "http://localhost:9000/generate-token",
+            userForToken,
+            {
+                withCredentials: true,
+            }
+        );
+
+        console.log(res.data);
+
+        toast.success("Login Successful");
+
+    } catch (error) {
+        console.log(error.message);
+        toast.error(error.message);
+    }
+};
 
     const handleGoogleLogin = async () => {
         try {
             const result = await googleLogin();
-            console.log("from login", result.user);
+            const user = result.user;
+            console.log(user);
+
+            const userInfo = {
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+            };
+
+            await axiosPublic.post("/user", userInfo);
+            // generate jwt token
+            await axios.post("http://localhost:9000/generate-token", { email: user.email }, {
+                withCredentials: true,
+            });
+
+            toast.success("Login Successful");
+
         } catch (error) {
-            console.log(error.message)
+            console.log(error.message);
+            toast.error(error.message);
         }
     };
 

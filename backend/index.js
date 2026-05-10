@@ -2,47 +2,86 @@ import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import cookieParser from "cookie-parser";
 import { connectDatabase } from './config/db.js';
 const port = process.env.PORT || 9000;
-// import { MongoClient, ServerApiVersion } from 'mongodb';
 
 const app = express();
 
 
-app.use(cors());
+const corsOptions = {
+    origin: ["http://localhost:5173"],
+    credentials: true,
+    optionSuccessStatus: 200,
+};
+
+const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+};
+
+// middlewares
+app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 
-
-
-
-
-// const uri = "mongodb+srv://<db_username>:<db_password>@cluster0.yigerrh.mongodb.net/?appName=Cluster0";
-// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.yigerrh.mongodb.net/productManagementAppWeero?appName=Cluster0`;
-
-// const client = new MongoClient(uri, {
-//     serverApi: {
-//         version: ServerApiVersion.v1,
-//         strict: true,
-//         deprecationErrors: true,
-//     }
-// });
 
 async function run() {
     try {
-        // await client.connect();
-        // const database = client.db("productManagementAppWeero");
+
         const database = await connectDatabase();
         const productsCollection = database.collection("products");
+        const usersCollection = database.collection("users");
 
-        app.post("/add-product", async (req, res) => {
-            const product = req.body;
-            console.log(product)
-            const result = await productsCollection.insertOne(product);
-            res.send(result);
+
+
+        // jwt token-------------------------
+        app.post("/generate-token", async (req, res) => {
+            const user = req.body;
+            console.log(user)
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: "365d",
+            });
+
+            res.cookie("token", token, cookieOptions).send({ success: true, token });
         });
 
-        // await client.db("admin").command({ ping: 1 });
-        // console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        app.get("/logout", (req, res) => {
+            res
+                .clearCookie("token", { ...cookieOptions, maxAge: 0 })
+                .send({ success: true });
+        });
+
+
+        app.post("/user", async (req, res) => {
+            const user = req.body;
+
+            const query = { email: user.email }
+            const existingUser = await usersCollection.findOne(query);
+
+            if (existingUser) {
+                return res.send({
+                    success: false,
+                    message: "User already exists",
+                });
+            }
+
+            const newUser = {
+                ...user,
+                createdAt: new Date(),
+            };
+
+            const result = await usersCollection.insertOne(newUser);
+
+            res.send({
+                success: true,
+                result,
+            });
+        });
+
+
     } finally {
         // await client.close();
     }

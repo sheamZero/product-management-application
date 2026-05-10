@@ -2,21 +2,90 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FiMail, FiLock, FiUser } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
+import { validatePassword } from "../utils/validatePassword";
+import { useContext } from "react";
+import axios from 'axios'
+import AuthContext from "../providers/authContext";
+import toast from "react-hot-toast";
+import useAxiosPublic from "../hooks/useAxiosPublic";
 
 const Register = () => {
+    const axiosPublic = useAxiosPublic();
+    const { emailPasswordRegister, updateUserProfile, googleLogin, loading } = useContext(AuthContext);
     const {
         register,
         handleSubmit,
         formState: { errors },
+        reset
     } = useForm();
 
-    const onSubmit = (data) => {
-        console.log(data);
+    // register user
+    const onSubmit = async (data) => {
+        const passwordError = validatePassword(data.password, data.confirmPassword);
+
+        if (passwordError) {
+            return toast.error(passwordError);
+        }
+
+        try {
+            const result = await emailPasswordRegister(data.email, data.password);
+            await updateUserProfile(data.name);
+
+            const userInfo = {
+                email: data.email,
+                displayName: data.name,
+                photoURL: null
+            };
+
+            const userForToken = {
+                email: result.user.email,
+            };
+
+            if (result.user) {
+                const userRes = await axiosPublic.post("/user", userInfo);
+                console.log(userRes.data);
+
+                // generate jwt token
+                const res = await axios.post("http://localhost:9000/generate-token", userForToken, {
+                    withCredentials: true,
+                }
+                );
+                console.log(res.data);
+                toast.success("Registration Successful");
+            }
+            reset();
+        } catch (error) {
+            console.log(error.message);
+            toast.error(error.message);
+        }
     };
 
-    const handleGoogleLogin = () => {
-        console.log("Google Login");
+    const handleGoogleLogin = async () => {
+        try {
+            const result = await googleLogin();
+            const user = result.user;
+            console.log(user);
+
+            const userInfo = {
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+            };
+
+            await axiosPublic.post("/user", userInfo);
+           // generate jwt token
+            await axios.post("http://localhost:9000/generate-token", { email: user.email }, {
+                withCredentials: true,
+            });
+
+            toast.success("Login Successful");
+
+        } catch (error) {
+            console.log(error.message);
+            toast.error(error.message);
+        }
     };
+
 
     return (
         <div className="h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -123,8 +192,9 @@ const Register = () => {
 
                     {/* submit button */}
                     <button
+                        disabled={loading}
                         type="submit"
-                        className="w-full py-2 rounded-xl bg-primary text-white font-medium hover:opacity-90 transition"
+                        className="w-full py-2 rounded-xl bg-primary text-white font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Register
                     </button>
@@ -140,7 +210,8 @@ const Register = () => {
                 {/* google login */}
                 <button
                     onClick={handleGoogleLogin}
-                    className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2.5 font-medium hover:bg-gray-50 transition"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2.5 font-medium hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <FcGoogle className="text-xl" />
                     Continue with Google

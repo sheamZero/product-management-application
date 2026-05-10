@@ -1,7 +1,8 @@
 import AuthContext from "./authContext";
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 import auth from "../firebase/firebase.config"
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 const googleProvider = new GoogleAuthProvider();
 const AuthProvider = ({ children }) => {
@@ -9,11 +10,43 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
 
+    // sign up user
+    const emailPasswordRegister = (email, pass) => {
+        setLoading(true);
+        return createUserWithEmailAndPassword(auth, email, pass);
+    }
+
+    // update user name
+    const updateUserProfile = (name) => {
+        return updateProfile(auth.currentUser, {
+            displayName: name,
+        })
+    }
+
+    // sign in user with email password
+    const emailPasswordLogin = (email, pass) => {
+        setLoading(true);
+        return signInWithEmailAndPassword(auth, email, pass);
+    }
+
+
     // google login
     const googleLogin = () => {
         setLoading(true);
         return signInWithPopup(auth, googleProvider)
     }
+
+
+    const signOutUser = async () => {
+        setLoading(true);
+        // localStorage.removeItem("access-token");
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/logout`, {
+            withCredentials: true,
+        });
+        console.log("ressss --- >", response)
+
+        signOut(auth);
+    };
 
 
     useEffect(() => {
@@ -34,6 +67,10 @@ const AuthProvider = ({ children }) => {
 
     const authInfo = {
         googleLogin,
+        emailPasswordRegister,
+        emailPasswordLogin,
+        updateUserProfile,
+        signOutUser,
         user,
         loading,
     };
