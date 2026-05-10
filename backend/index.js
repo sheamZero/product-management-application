@@ -9,6 +9,7 @@ const port = process.env.PORT || 9000;
 import { connectDatabase } from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import productRoutes from './routes/productRoutes.js';
 
 const app = express();
 
@@ -59,6 +60,7 @@ async function run() {
 
 
         app.use("/user", userRoutes(usersCollection));
+        app.use("/products", productRoutes(productsCollection))
 
 
     } finally {
