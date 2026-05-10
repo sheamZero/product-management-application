@@ -1,10 +1,12 @@
 import express from "express";
-import { addProduct } from "../controllers/productControllers.js";
+import { addProduct, getAllProducts } from "../controllers/productControllers.js";
+import verifyToken from "../middleware/verifyToken.js";
 
 const productRoutes = (productsCollection) => {
     const router = express.Router();
 
-    router.post("/", addProduct(productsCollection));
+    router.get("/", getAllProducts(productsCollection))
+    router.post("/", verifyToken, addProduct(productsCollection));
 
     return router;
 }

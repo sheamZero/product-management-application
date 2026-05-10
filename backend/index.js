@@ -41,25 +41,9 @@ async function run() {
 
         app.use("/auth", authRoutes(cookieOptions))
 
-        // jwt token-------------------------
-        // app.post("/generate-token", async (req, res) => {
-        //     const user = req.body;
-        //     console.log(user)
-        //     const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        //         expiresIn: "365d",
-        //     });
-
-        //     res.cookie("token", token, cookieOptions).send({ success: true, token });
-        // });
-
-        // app.get("/logout", (req, res) => {
-        //     res
-        //         .clearCookie("token", { ...cookieOptions, maxAge: 0 })
-        //         .send({ success: true });
-        // });
-
-
         app.use("/user", userRoutes(usersCollection));
+
+        app.use("/products", productRoutes(productsCollection))
         app.use("/products", productRoutes(productsCollection))
 
 

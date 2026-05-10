@@ -3,36 +3,44 @@ import { useForm } from "react-hook-form";
 import uploadImage from "../utils/uploadImage";
 import useAddProduct from "../hooks/useAddProduct";
 import toast from "react-hot-toast"
+import { useState } from "react";
 
 const AddProductModal = ({ openModal, setOpenModal }) => {
     const { register, handleSubmit, reset, formState: { errors }, } = useForm();
-    const { mutateAsync, isPending } = useAddProduct()
+    const { mutateAsync, isPending } = useAddProduct();
+    const [isAddingProduct, setIsAddingProduct] = useState(false);
 
     if (!openModal) return null;
 
     const onSubmit = async (data) => {
-        const imageFile = data.image[0];
-        const imageUrl = await uploadImage(imageFile);
+        setIsAddingProduct(true);
+        try {
+            const imageFile = data.image[0];
+            const imageUrl = await uploadImage(imageFile);
 
-        const product = {
-            productName: data.productName,
-            price: data.price,
-            image: imageUrl,
-            description: data.description,
-        };
+            const product = {
+                productName: data.productName,
+                price: data.price,
+                image: imageUrl,
+                description: data.description,
+            };
 
-        await mutateAsync(product, {
-            onSuccess: (data) => {
-                console.log("success:", data);
+            const res = await mutateAsync(product);
+            console.log(res.result)
+            if (res.result?.insertedId) {
                 toast.success("Product Added Successfully");
-                reset();
-                setOpenModal(false);
-            },
-            onError: (error) => {
-                console.log(error);
-                toast.error(error.message);
-            },
-        });
+            }
+
+            reset();
+            setOpenModal(false);
+
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message);
+        }
+        finally {
+            setIsAddingProduct(false);
+        }
     };
 
     const handleOutsideClick = (e) => {
@@ -145,7 +153,7 @@ const AddProductModal = ({ openModal, setOpenModal }) => {
 
                         <button
                             type="submit"
-                            disabled={isPending}
+                            disabled={isAddingProduct}
                             className="rounded-xl bg-primary px-6 py-2.5 font-medium text-white hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isPending ? "Adding..." : "Add Product"}

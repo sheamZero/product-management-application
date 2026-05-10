@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useAuth } from "./useAuth";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import AuthContext from "../providers/authContext";
 
 const axiosSecure = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -9,19 +9,26 @@ const axiosSecure = axios.create({
 });
 
 const useAxiosSecure = () => {
-    const { signOutUser } = useAuth();
+    const { signOutUser } = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(() => {
+
         const interceptor = axiosSecure.interceptors.response.use(
-            (res) => res,
+
+            (response) => response,
             async (error) => {
 
                 const status = error?.response?.status;
 
-                if (status === 401 || status === 403) {
+                // Unauthorized
+                if (status === 401) {
+
                     await signOutUser();
-                    navigate("/signin", { replace: true, state: {} });
+
+                    navigate("/login", {
+                        replace: true,
+                    });
                 }
 
                 return Promise.reject(error);
@@ -32,7 +39,7 @@ const useAxiosSecure = () => {
             axiosSecure.interceptors.response.eject(interceptor);
         };
 
-    }, [signOutUser, navigate]);
+    }, [navigate, signOutUser]);
 
     return axiosSecure;
 };

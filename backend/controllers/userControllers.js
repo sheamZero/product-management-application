@@ -7,7 +7,7 @@ export const createUser = (usersCollection) => async (req, res) => {
         const existingUser = await usersCollection.findOne(query);
 
         if (existingUser) {
-            return res.status(409).send({
+            return res.status(201).send({
                 success: false,
                 message: "User already exists",
             });

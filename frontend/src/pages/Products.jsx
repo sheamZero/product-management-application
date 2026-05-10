@@ -1,32 +1,31 @@
 import { MdOutlineAddTask } from "react-icons/md";
 import ProductTableRow from "../components/ProductTableRow";
 import { useState } from "react";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import AddProductModal from "../modals/AddProductModal";
+import useGetAllProducts from "../hooks/useGetAllProducts";
 
 const Products = () => {
+    const [page, setPage] = useState(1);
+    const limit = 4;
     const [isAddProduct, setIsAddProduct] = useState(false);
-    // console.log(isAddProduct)
-    const products = [
-        {
-            _id: 1,
-            productName: "Gaming Mechanical Keyboard",
-            price: 4590,
-            image: "https://i.ibb.co.com/zVPshSsH/headphone.jpg",
-            description:
-                "RGB mechanical gaming keyboard with blue switches.",
-        },
-        {
-            _id: 2,
-            productName: "Wireless Bluetooth Headphones",
-            price: 2499,
-            image: "https://i.ibb.co/8g1dK5G/headphone.jpg",
-            description:
-                "Noise cancellation wireless headphones.",
-        },
-    ];
 
+    const { data, isLoading } = useGetAllProducts({ page, limit });
+
+    console.log(data);
+
+    const products = data?.data || [];
+    const totalPages = data?.totalPages || 1;
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center">
+                <p>Loading...</p>
+            </div>
+        )
+    }
     return (
-        <div className="container mx-auto px-4 md:px-10 lg:px-16 py-10">
+        <div className="container mx-auto px-4 md:px-10 lg:px-16 py-5">
 
             <div className="flex items-center justify-between">
                 <div className="mb-6">
@@ -41,7 +40,7 @@ const Products = () => {
 
                 <button
                     onClick={() => setIsAddProduct(!isAddProduct)}
-                    className="flex items-center gap-2 px-6 py-3 bg-primary/90 hover:bg-primary text-white rounded-full font-semibold">
+                    className="flex items-center gap-2 px-6 py-3 bg-primary/90 hover:bg-primary text-white rounded-full font-semibold transition-all duration-300 ease-out transform hover:scale-105 active:scale-95 shadow-md hover:shadow-xl">
                     <MdOutlineAddTask className="text-2xl font-extrabold" />
                     Add Product
                 </button>
@@ -70,9 +69,31 @@ const Products = () => {
                                     idx={idx}
                                 />
                             ))}
+
+
                     </tbody>
 
                 </table>
+            </div>
+
+            <div className="flex items-center justify-center gap-4 mt-6">
+                <button
+                    disabled={page === 1}
+                    onClick={() => setPage(page - 1)}
+                    className="group flex items-center justify-center w-11 h-11 rounded-full border border-gray-300 bg-white shadow-sm hover:shadow-md transition-all duration-300 ease-out hover:bg-primary/10 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <FaArrowLeft className="text-black group-hover:text-primary transition" />
+                </button>
+
+                <span className="font-medium">
+                    Page {page} of {totalPages}
+                </span>
+
+                <button
+                    disabled={page === totalPages}
+                    onClick={() => setPage(page + 1)}
+                    className="group flex items-center justify-center w-11 h-11 rounded-full border border-gray-300 bg-white shadow-sm hover:shadow-md transition-all duration-300 ease-out hover:bg-primary/10 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <FaArrowRight className="text-black group-hover:text-primary transition" />
+                </button>
             </div>
 
             {/* add a product here */}
