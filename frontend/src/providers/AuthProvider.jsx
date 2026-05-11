@@ -43,13 +43,17 @@ const AuthProvider = ({ children }) => {
 
     const signOutUser = async () => {
         setLoading(true);
-        // localStorage.removeItem("access-token");
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
-            withCredentials: true,
-        });
-        console.log("ressss --- >", response)
+        try {
+            await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
+                withCredentials: true,
+            });
 
-        signOut(auth);
+            await signOut(auth);
+        } catch (error) {
+            console.log(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
 

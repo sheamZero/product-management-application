@@ -4,11 +4,14 @@ import uploadImage from "../utils/uploadImage";
 import useAddProduct from "../hooks/useAddProduct";
 import toast from "react-hot-toast"
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AddProductModal = ({ openModal, setOpenModal }) => {
     const { register, handleSubmit, reset, formState: { errors }, } = useForm();
     const { mutateAsync, isPending } = useAddProduct();
     const [isAddingProduct, setIsAddingProduct] = useState(false);
+
+    const queryClient = useQueryClient();
 
     if (!openModal) return null;
 
@@ -29,6 +32,8 @@ const AddProductModal = ({ openModal, setOpenModal }) => {
             console.log(res.result)
             if (res.result?.insertedId) {
                 toast.success("Product Added Successfully");
+
+                queryClient.invalidateQueries(["products"]);
             }
 
             reset();

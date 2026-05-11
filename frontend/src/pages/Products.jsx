@@ -4,18 +4,21 @@ import { useEffect, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import AddProductModal from "../modals/AddProductModal";
 import useGetAllProducts from "../hooks/useGetAllProducts";
+import EditProductModal from "../modals/EditProductModal";
 
 const Products = () => {
     const [page, setPage] = useState(1);
     const limit = 4;
     const [search, setSearch] = useState("");
     const [debounced, setDebounced] = useState('');
-    const [priceRange, setPriceRange] = useState("")
+    const [priceRange, setPriceRange] = useState("");
+
     const [isAddProduct, setIsAddProduct] = useState(false);
+    const [isEditProduct, setIsEditProduct] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
     const { data, isLoading } = useGetAllProducts({ page, limit, search: debounced, priceRange });
-    // console.log("search ", search, priceRange, page)
-    // console.log(data);
+
 
     const products = data?.data || [];
     const totalPages = data?.totalPages || 1;
@@ -121,6 +124,8 @@ const Products = () => {
                                             key={product._id}
                                             product={product}
                                             idx={idx}
+                                            setSelectedProduct={setSelectedProduct}
+                                            setIsEditProduct={setIsEditProduct}
                                         />
                                     ))}
 
@@ -158,6 +163,13 @@ const Products = () => {
             <AddProductModal
                 openModal={isAddProduct}
                 setOpenModal={setIsAddProduct}
+            />
+
+            {/* update a product here */}
+            <EditProductModal
+                openModal={isEditProduct}
+                setOpenModal={setIsEditProduct}
+                product={selectedProduct}
             />
         </div>
     );
