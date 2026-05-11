@@ -46,6 +46,8 @@ async function run() {
         app.use("/products", productRoutes(productsCollection))
         app.use("/products", productRoutes(productsCollection));
         app.use("/products", productRoutes(productsCollection));
+        app.use("/products", productRoutes(productsCollection));
+
 
 
     } finally {

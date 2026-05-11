@@ -1,10 +1,13 @@
 import { MdOutlineAddTask } from "react-icons/md";
 import ProductTableRow from "../components/ProductTableRow";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import AddProductModal from "../modals/AddProductModal";
 import useGetAllProducts from "../hooks/useGetAllProducts";
 import EditProductModal from "../modals/EditProductModal";
+import AuthContext from "../providers/authContext";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const Products = () => {
     const [page, setPage] = useState(1);
@@ -17,11 +20,36 @@ const Products = () => {
     const [isEditProduct, setIsEditProduct] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
+    const { user, loading } = useContext(AuthContext);
     const { data, isLoading } = useGetAllProducts({ page, limit, search: debounced, priceRange });
-
 
     const products = data?.data || [];
     const totalPages = data?.totalPages || 1;
+    const navigate = useNavigate();
+
+    const handleAddProductss = async () => {
+        if (!user) {
+            const result = await Swal.fire({
+                title: "Login Required!",
+                text: "You must have to login first to Add a new product.",
+                icon: "warning",
+
+                width: "400px",
+                padding: "2rem",
+                confirmButtonColor: "#0fab74",
+                showCancelButton: true,
+                confirmButtonText: "Login",
+                cancelButtonText: "Cancel"
+            });
+
+            if (result.isConfirmed) {
+                navigate("/login");
+            }
+            return
+        }
+
+        setIsAddProduct(true);
+    }
 
 
     useEffect(() => {
@@ -32,7 +60,7 @@ const Products = () => {
     }, [search]);
 
 
-    if (isLoading) {
+    if (isLoading || loading) {
         return (
             <div className="flex items-center justify-center">
                 <p>Loading...</p>
@@ -45,16 +73,13 @@ const Products = () => {
         <div className="container mx-auto px-4 md:px-10 lg:px-16 py-5">
 
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-6 bg-primary/10 p-6 rounded-2xl">
-
-                {/* LEFT SIDE */}
                 <div>
                     <h2 className="text-3xl font-bold">All Products</h2>
                     <p className="mt-2">Manage all products easily.</p>
                 </div>
 
-                {/* RIGHT SIDE */}
+                {/* search and filter */}
                 <div className="flex flex-col sm:flex-row items-center gap-3">
-
                     {/* SEARCH */}
                     <input
                         type="text"
@@ -66,8 +91,6 @@ const Products = () => {
                         }}
                         className="w-full  sm:w-64 rounded-full border border-gray-200 bg-white px-4 py-3 outline-none focus:border-primary"
                     />
-
-                    {/* FILTER */}
                     <select
                         value={priceRange}
                         onChange={(e) => {
@@ -84,10 +107,11 @@ const Products = () => {
                         <option value="1000-2000">$1000 - $2000</option>
                     </select>
 
-                    {/* ADD PRODUCT BUTTON */}
+                    {/*add product*/}
+
                     <button
-                        onClick={() => setIsAddProduct(!isAddProduct)}
-                        className="flex items-center gap-2 px-6 py-3 bg-primary/90 hover:bg-primary text-white rounded-full font-semibold transition-all duration-300 ease-out transform hover:scale-105 active:scale-95 shadow-md hover:shadow-xl"
+                        onClick={handleAddProductss}
+                        className="flex items-center gap-2 px-6 py-3 cursor-pointer bg-primary/90 hover:bg-primary text-white rounded-full font-semibold transition-all duration-300 ease-out transform hover:scale-105 active:scale-95 shadow-md hover:shadow-xl"
                     >
                         <MdOutlineAddTask className="text-2xl font-extrabold" />
                         Add Product

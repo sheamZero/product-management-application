@@ -86,7 +86,7 @@ const AddProductModal = ({ openModal, setOpenModal }) => {
                         <input
                             type="text"
                             placeholder="Enter product name"
-                            className="w-full rounded-xl border border-gray-300 px-4 py-2.5 outline-none focus:border-primary"
+                            className="w-full rounded-xl border  px-4 py-2.5 outline-none focus:border-primary"
                             {...register("productName", {
                                 required: "Product name is required",
                             })}
@@ -103,7 +103,7 @@ const AddProductModal = ({ openModal, setOpenModal }) => {
                         <input
                             type="number"
                             placeholder="Enter product price"
-                            className="w-full rounded-xl border border-gray-300 px-4 py-2.5 outline-none focus:border-primary"
+                            className="w-full rounded-xl border px-4 py-2.5 outline-none focus:border-primary"
                             {...register("price", {
                                 required: "Price is required",
                             })}
@@ -120,7 +120,7 @@ const AddProductModal = ({ openModal, setOpenModal }) => {
                         <input
                             type="file"
                             accept="image/*"
-                            className="w-full rounded-xl border border-gray-300 px-4 py-2.5 outline-none focus:border-primary"
+                            className="w-full rounded-xl border px-4 py-2.5 outline-none focus:border-primary"
                             {...register("image", {
                                 required: "Image is required",
                             })}
@@ -137,7 +137,7 @@ const AddProductModal = ({ openModal, setOpenModal }) => {
                         <textarea
                             rows="4"
                             placeholder="Enter product description"
-                            className="w-full resize-none rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-primary"
+                            className="w-full resize-none rounded-xl border px-4 py-3 outline-none focus:border-primary"
                             {...register("description", {
                                 required: "Description is required",
                             })}
@@ -151,7 +151,7 @@ const AddProductModal = ({ openModal, setOpenModal }) => {
                         <button
                             type="button"
                             onClick={() => setOpenModal(false)}
-                            className="rounded-xl border border-gray-300 px-5 py-2.5 font-medium hover:bg-gray-100 transition"
+                            className="rounded-xl border border-gray-300 px-5 py-2.5 font-medium hover:bg-gray-100 transition cursor-pointer"
                         >
                             Cancel
                         </button>
@@ -159,7 +159,7 @@ const AddProductModal = ({ openModal, setOpenModal }) => {
                         <button
                             type="submit"
                             disabled={isAddingProduct}
-                            className="rounded-xl bg-primary px-6 py-2.5 font-medium text-white hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="rounded-xl bg-primary px-6 py-2.5 font-medium text-white cursor-pointer hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isPending ? "Adding..." : "Add Product"}
                         </button>

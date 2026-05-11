@@ -62,7 +62,7 @@ export const addProduct = (productsCollection) => async (req, res) => {
             userEmail: user.email
         }
 
-        console.log("deconded user ", user)
+        // console.log("deconded user ", user)
 
         const result = await productsCollection.insertOne(product_data);
 
@@ -84,6 +84,37 @@ export const addProduct = (productsCollection) => async (req, res) => {
     }
 }
 
+export const updateProduct = (productsCollection) => async (req, res) => {
+    try {
+        const id = req.params.id;
+        const updatedProduct = req.body;
+
+        const query = {
+            _id: new ObjectId(id),
+        };
+
+        const updatedDoc = {
+            $set: {
+                ...updatedProduct,
+                price: Number(updatedProduct.price),
+            },
+        };
+
+        const result = await productsCollection.updateOne(
+            query,
+            updatedDoc
+        );
+
+        res.send(result);
+
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: "Internal server error",
+            error: error.message,
+        });
+    }
+};
 
 export const deleteProductById = (productsCollection) => async (req, res) => {
     try {
@@ -92,7 +123,7 @@ export const deleteProductById = (productsCollection) => async (req, res) => {
         const query = { _id: new ObjectId(id) }
 
         const result = await productsCollection.deleteOne(query);
-        console.log("dlete rs", result);
+        // console.log("dlete rs", result);
 
         if (result.deletedCount === 0) {
             return res.status(404).send({

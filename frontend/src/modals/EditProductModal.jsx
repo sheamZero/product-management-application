@@ -1,9 +1,15 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { IoClose } from "react-icons/io5";
+import useUpdateProduct from "../hooks/useUpdateProduct";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EditProductModal = ({ openModal, setOpenModal, product }) => {
     const { register, handleSubmit, reset } = useForm();
+    const { mutateAsync, isPending } = useUpdateProduct();
+    const id = product?._id;
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         if (openModal && product) {
@@ -19,7 +25,21 @@ const EditProductModal = ({ openModal, setOpenModal, product }) => {
     if (!openModal) return null;
 
     const onSubmit = async (data) => {
-        console.log(data);
+        const updatedProduct = { ...data };
+        try {
+            const result = await mutateAsync({ id, updatedProduct });
+
+            if (result.modifiedCount) {
+                toast.success("Product updated Successfully!");
+                queryClient.invalidateQueries(["products"])
+            }
+
+            setOpenModal(false)
+
+        } catch (error) {
+            console.log(error);
+            toast.error("Faild to update product!");
+        }
     };
 
     return (
@@ -85,10 +105,11 @@ const EditProductModal = ({ openModal, setOpenModal, product }) => {
                             Cancel
                         </button>
                         <button
+                            disabled={isPending}
                             type="submit"
-                            className="px-6 py-2 bg-primary text-white rounded-xl hover:bg-primary/90 transition"
+                            className="px-6 py-2 disabled:opacity-50 disabled:cursor-not-allowed bg-primary text-white rounded-xl hover:bg-primary/90 transition"
                         >
-                            Update Product
+                            {isPending ? "Updating..." : "Update Product"}
                         </button>
                     </div>
                 </form>
