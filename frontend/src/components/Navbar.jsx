@@ -22,9 +22,9 @@ const Navbar = () => {
                         className="text-2xl block md:hidden cursor-pointer"
                     />
 
-                    <Link className="text-xl font-semibold cursor-pointer" to="/">
+                    <Link className="text-2xl font-semibold cursor-pointer" to="/">
                         <span className="text-primary">Weero</span>
-                        Products
+                        Task
                     </Link>
                 </div>
 
