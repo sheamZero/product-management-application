@@ -14,21 +14,18 @@ const Products = () => {
     const [isAddProduct, setIsAddProduct] = useState(false);
 
     const { data, isLoading } = useGetAllProducts({ page, limit, search: debounced, priceRange });
-    console.log("search ", search, priceRange, page)
-    console.log(data);
+    // console.log("search ", search, priceRange, page)
+    // console.log(data);
 
     const products = data?.data || [];
     const totalPages = data?.totalPages || 1;
 
 
     useEffect(() => {
-
         const timer = setTimeout(() => {
             setDebounced(search);
         }, 1000);
-
         return () => clearTimeout(timer);
-
     }, [search]);
 
 
@@ -97,55 +94,65 @@ const Products = () => {
             </div>
 
 
-            <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
-                <table className="w-full text-sm text-left">
+            {
+                products.length === 0 ? (
+                    <p className="text-black text-center font-medium text-xl">
+                        No products available. Login to add your first product.
+                    </p>
+                ) : (
+                    <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
+                        <table className="w-full text-sm text-left">
 
-                    <thead className="bg-primary text-white">
-                        <tr>
-                            <th className="px-4 py-4 uppercase font-semibold">#</th>
-                            <th className="px-4 py-4 uppercase font-semibold">Image</th>
-                            <th className="px-4 py-4 uppercase font-semibold">Name</th>
-                            <th className="px-4 py-4 uppercase font-semibold">Price</th>
-                            <th className="px-4 py-4 uppercase font-semibold">Description</th>
-                            <th className="px-4 py-4 uppercase font-semibold text-center">Actions</th>
-                        </tr>
-                    </thead>
+                            <thead className="bg-primary text-white">
+                                <tr>
+                                    <th className="px-4 py-4 uppercase font-semibold">#</th>
+                                    <th className="px-4 py-4 uppercase font-semibold">Image</th>
+                                    <th className="px-4 py-4 uppercase font-semibold">Name</th>
+                                    <th className="px-4 py-4 uppercase font-semibold">Price</th>
+                                    <th className="px-4 py-4 uppercase font-semibold">Description</th>
+                                    <th className="px-4 py-4 uppercase font-semibold text-center">Actions</th>
+                                </tr>
+                            </thead>
 
-                    <tbody>
-                        {
-                            products.map((product, idx) => (
-                                <ProductTableRow
-                                    key={product._id}
-                                    product={product}
-                                    idx={idx}
-                                />
-                            ))}
+                            <tbody>
+                                {
+                                    products.map((product, idx) => (
+                                        <ProductTableRow
+                                            key={product._id}
+                                            product={product}
+                                            idx={idx}
+                                        />
+                                    ))}
 
 
-                    </tbody>
+                            </tbody>
 
-                </table>
-            </div>
+                        </table>
+                    </div>
+                )
+            }
 
-            <div className="flex items-center justify-center gap-4 mt-6">
-                <button
-                    disabled={page === 1}
-                    onClick={() => setPage(page - 1)}
-                    className="group flex items-center justify-center w-11 h-11 rounded-full border border-gray-300 bg-white shadow-sm hover:shadow-md transition-all duration-300 ease-out hover:bg-primary/10 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed">
-                    <FaArrowLeft className="text-black group-hover:text-primary transition" />
-                </button>
+            {
+                products.length !== 0 && (<div className="flex items-center justify-center gap-4 mt-6">
+                    <button
+                        disabled={page === 1}
+                        onClick={() => setPage(page - 1)}
+                        className="group flex items-center justify-center w-11 h-11 rounded-full border border-gray-300 bg-white shadow-sm hover:shadow-md transition-all duration-300 ease-out hover:bg-primary/10 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <FaArrowLeft className="text-black group-hover:text-primary transition" />
+                    </button>
 
-                <span className="font-medium">
-                    Page {page} of {totalPages}
-                </span>
+                    <span className="font-medium">
+                        Page {page} of {totalPages}
+                    </span>
 
-                <button
-                    disabled={page === totalPages}
-                    onClick={() => setPage(page + 1)}
-                    className="group flex items-center justify-center w-11 h-11 rounded-full border border-gray-300 bg-white shadow-sm hover:shadow-md transition-all duration-300 ease-out hover:bg-primary/10 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed">
-                    <FaArrowRight className="text-black group-hover:text-primary transition" />
-                </button>
-            </div>
+                    <button
+                        disabled={page === totalPages}
+                        onClick={() => setPage(page + 1)}
+                        className="group flex items-center justify-center w-11 h-11 rounded-full border border-gray-300 bg-white shadow-sm hover:shadow-md transition-all duration-300 ease-out hover:bg-primary/10 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <FaArrowRight className="text-black group-hover:text-primary transition" />
+                    </button>
+                </div>)
+            }
 
             {/* add a product here */}
             <AddProductModal

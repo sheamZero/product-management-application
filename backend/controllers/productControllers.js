@@ -1,4 +1,4 @@
-
+import { ObjectId } from "mongodb";
 
 export const getAllProducts = (productsCollection) => async (req, res) => {
     try {
@@ -84,3 +84,34 @@ export const addProduct = (productsCollection) => async (req, res) => {
     }
 }
 
+
+export const deleteProductById = (productsCollection) => async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const query = { _id: new ObjectId(id) }
+
+        const result = await productsCollection.deleteOne(query);
+        console.log("dlete rs", result);
+
+        if (result.deletedCount === 0) {
+            return res.status(404).send({
+                success: false,
+                message: "Product not found",
+            });
+        }
+
+        res.status(200).send({
+            success: true,
+            message: "Product deleted successfully",
+            result,
+        });
+    } catch (error) {
+        res.status(500)
+            .send({
+                success: false,
+                message: "Internal server error",
+                error: error.message,
+            });
+    }
+}

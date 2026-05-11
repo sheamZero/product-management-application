@@ -44,7 +44,8 @@ async function run() {
         app.use("/user", userRoutes(usersCollection));
 
         app.use("/products", productRoutes(productsCollection))
-        app.use("/products", productRoutes(productsCollection))
+        app.use("/products", productRoutes(productsCollection));
+        app.use("/products", productRoutes(productsCollection));
 
 
     } finally {
