@@ -5,14 +5,17 @@ Users can browse all products without login, but **authentication is required fo
 
 ---
 
-## 🌐 Live Link
-- 🔗 Frontend: https://your-live-link.com  
+## 🌐 Live Links
+
+- 🔗 Frontend: https://product-management-appli-fa302.web.app
+- 🔗 Backend: https://backend-nu-puce-30.vercel.app
 
 ---
 
 ## 📌 Project Overview
 
 This application allows users to:
+
 - View all available products publicly
 - Securely login using authentication
 - Perform CRUD operations on products (protected)
@@ -26,7 +29,6 @@ Only authenticated users can modify product data to ensure security and data int
 ### 👀 Public Features
 - View all products
 - Responsive UI design
-- Product details display
 
 ### 🔐 Authentication Features
 - JWT-based login system
@@ -34,9 +36,9 @@ Only authenticated users can modify product data to ensure security and data int
 - Secure cookie-based session handling
 
 ### 🛠️ CRUD Features (Protected)
-- ➕ Add product (Login required)
-- ✏️ Edit product (Login required)
-- ❌ Delete product (Login required)
+-  Add product (Login required)
+-  Edit product (Login required)
+-  Delete product (Login required)
 
 ---
 
@@ -67,11 +69,10 @@ Only authenticated users can modify product data to ensure security and data int
 
 ## 🔐 Authentication Flow
 
-1. User logs in via Firebase / Auth system  
-2. Backend generates JWT token  
-3. Token stored in secure cookie  
-4. Protected routes validate token before allowing CRUD operations  
-
+1. User logs in via Firebase / Auth system
+2. Backend generates JWT token
+3. Token stored in secure cookie
+4. Protected routes validate token before allowing CRUD operations
 
 ---
 
@@ -87,11 +88,9 @@ Only authenticated users can modify product data to ensure security and data int
 
 ---
 
-# Product Management Application
-
 ## 🚀 Installation & Setup
 
-### Clone Repository
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/sheamZero/product-management-application.git
@@ -99,17 +98,13 @@ git clone https://github.com/sheamZero/product-management-application.git
 
 ---
 
-### 1. Frontend Setup
+### 2. Frontend Setup
 
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
----
-
-### Environment Variables (`.env.local`)
 
 Create a `.env.local` file inside the `frontend` root directory:
 
@@ -118,18 +113,15 @@ VITE_API_BASE_URL=http://localhost:9000
 VITE_IMGBB_API_KEY=your_imgbb_api_key
 ```
 
+---
 
-### . Backend Setup
+### 3. Backend Setup
 
 ```bash
 cd backend
 npm install
 npm run dev
 ```
-
----
-
-## 🔐 Environment Variables
 
 Create a `.env` file inside the `backend` root directory:
 
@@ -141,6 +133,3 @@ ACCESS_TOKEN_SECRET=your_jwt_secret
 ```
 
 > **Note:** Replace all placeholder values with your actual credentials.
-
-
-
