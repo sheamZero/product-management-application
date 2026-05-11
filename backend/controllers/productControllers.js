@@ -2,17 +2,35 @@
 
 export const getAllProducts = (productsCollection) => async (req, res) => {
     try {
+        const { price, search } = req.query;
+
         const currentPage = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 4;
         const skip = (currentPage - 1) * limit;
 
+        const query = {};
+        if (search) {
+            query.productName = { $regex: search, $options: "i" }
+        }
+
+        if (price) {
+            const prices = price.split("-");
+            const minPrice = Number(prices[0]);
+            const maxPrice = Number(prices[1]);
+
+            query.price = {
+                $gte: minPrice,
+                $lte: maxPrice
+            }
+        }
+
         const result = await productsCollection
-            .find()
+            .find(query)
             .skip(skip)
             .limit(limit)
             .toArray();
 
-        const totalProducts = await productsCollection.estimatedDocumentCount();
+        const totalProducts = await productsCollection.countDocuments(query);
 
         res.status(200)
             .send({
@@ -21,7 +39,7 @@ export const getAllProducts = (productsCollection) => async (req, res) => {
                 total: totalProducts,
                 totalPages: Math.ceil(totalProducts / limit),
             });
-            
+
     } catch (error) {
         res
             .status(500)
@@ -38,9 +56,15 @@ export const addProduct = (productsCollection) => async (req, res) => {
         const productData = req.body;
         const user = req.user;
 
+        const product_data = {
+            ...productData,
+            price: Number(productData.price),
+            userEmail: user.email
+        }
+
         console.log("deconded user ", user)
 
-        const result = await productsCollection.insertOne(productData);
+        const result = await productsCollection.insertOne(product_data);
 
         res
             .status(201)
