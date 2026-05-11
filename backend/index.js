@@ -30,16 +30,13 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
-
 async function run() {
     try {
-
         const database = await connectDatabase();
         const productsCollection = database.collection("products");
         const usersCollection = database.collection("users");
 
-
-        app.use("/auth", authRoutes(cookieOptions))
+        app.use("/auth", authRoutes(cookieOptions)) // generate token
 
         app.use("/user", userRoutes(usersCollection));
 
@@ -48,16 +45,11 @@ async function run() {
         app.use("/products", productRoutes(productsCollection));
         app.use("/products", productRoutes(productsCollection));
 
-
-
     } finally {
         // await client.close();
     }
 }
 run().catch(console.dir);
-
-
-
 
 app.get("/", (req, res) => {
     res.send("Hello from the backend!");

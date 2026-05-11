@@ -38,15 +38,12 @@ const Register = () => {
             };
 
             if (result.user) {
-                const userRes = await axiosPublic.post("/user", userInfo);
-                console.log(userRes.data);
-
+                await axiosPublic.post("/user", userInfo);
                 // generate jwt token
-                const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/generate-token`, userForToken, {
+                await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/generate-token`, userForToken, {
                     withCredentials: true,
                 }
                 );
-                console.log(res.data);
                 toast.success("Registration Successful");
                 navigate("/")
             }
@@ -61,7 +58,7 @@ const Register = () => {
         try {
             const result = await googleLogin();
             const user = result.user;
-            console.log(user);
+            // console.log(user);
 
             const userInfo = {
                 email: user.email,

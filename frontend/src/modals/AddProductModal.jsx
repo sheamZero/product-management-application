@@ -29,7 +29,7 @@ const AddProductModal = ({ openModal, setOpenModal }) => {
             };
 
             const res = await mutateAsync(product);
-            console.log(res.result)
+            // console.log(res.result)
             if (res.result?.insertedId) {
                 toast.success("Product Added Successfully");
 
@@ -40,7 +40,7 @@ const AddProductModal = ({ openModal, setOpenModal }) => {
             setOpenModal(false);
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             toast.error(error.message);
         }
         finally {

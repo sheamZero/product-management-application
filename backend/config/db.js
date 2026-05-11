@@ -16,8 +16,8 @@ const client = new MongoClient(uri, {
 
 export const connectDatabase = async () => {
     try {
-        await client.connect(); 
-        console.log("Connected to MongoDB successfully!");
+        await client.connect();
+        // console.log("Connected to MongoDB successfully!");
         return client.db("productManagementAppWeero");
     } catch (error) {
         console.error("Error connecting to MongoDB:", error);

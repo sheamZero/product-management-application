@@ -8,7 +8,7 @@ const useUpdateProduct = () => {
 
     return useMutation({
         mutationFn: async ({id, updatedProduct}) => {
-            console.log("data and id ", updatedProduct, id)
+            // console.log("data and id ", updatedProduct, id)
             const { data } = await axiosSecure.put(`/products/${id}`, updatedProduct)
             return data;
         }

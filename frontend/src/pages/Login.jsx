@@ -17,7 +17,7 @@ const Login = () => {
 
     const onSubmit = async (data) => {
         try {
-            console.log(data);
+            // console.log(data);
             const { email, password } = data;
             const result = await emailPasswordLogin(email, password);
 
@@ -27,12 +27,12 @@ const Login = () => {
             };
 
             // generate token
-            const res = await axios.post(
+            await axios.post(
                 `${import.meta.env.VITE_API_BASE_URL}/auth/generate-token`, userForToken, {
                 withCredentials: true,
             });
 
-            console.log(res.data);
+            // console.log(res.data);
 
             toast.success("Login Successful");
             navigate("/")

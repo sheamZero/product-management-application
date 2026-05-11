@@ -13,7 +13,7 @@ export const generateToken = (cookieOptions) => async (req, res) => {
 
 
 export const logout = (cookieOptions) => (req, res) => {
-    console.log("hitt logout controller")
+    // console.log("hitt logout controller")
     res.clearCookie("token", { ...cookieOptions, maxAge: 0 });
     res.send({ success: true });
 };
