@@ -88,7 +88,17 @@ Only authenticated users can modify product data to ensure security and data int
 
 ---
 
+## 📂 Folder Structure
+
+```bash
+product-management-application/
+│
+├── frontend/
+└── backend/
+```
+
 ## 🚀 Installation & Setup
+
 
 ### 1. Clone Repository
 
@@ -110,7 +120,15 @@ Create a `.env.local` file inside the `frontend` root directory:
 
 ```env
 VITE_API_BASE_URL=http://localhost:9000
+
 VITE_IMGBB_API_KEY=your_imgbb_api_key
+
+VITE_apiKey=your_firebase_api_key
+VITE_authDomain=your_firebase_auth_domain
+VITE_projectId=your_firebase_project_id
+VITE_storageBucket=your_firebase_storage_bucket
+VITE_messagingSenderId=your_firebase_messaging_sender_id
+VITE_appId=your_firebase_app_id
 ```
 
 ---
